@@ -38,6 +38,14 @@ public class BoardTest {
         assertFalse("Black move was valid where it shouldn't be", board.checkMove(3,2,Marker.BLACK));
         assertTrue("White move was not valid where it should be", board.checkMove(3,2,Marker.WHITE));
         assertFalse("White move was valid where it shouldn't be", board.checkMove(2,2,Marker.WHITE));
+        assertFalse("Empy marker should not be valid",board.checkMove( 4,2,Marker.EMPTY));
+        assertFalse("negative coordinates should not be valid",board.checkMove( -1,0,Marker.BLACK));
+        assertFalse("negative coordinates should not be valid",board.checkMove(0,-1,Marker.BLACK));
+        assertFalse("negative coordinates should not be valid",board.checkMove(-1,-1,Marker.BLACK));
+
+        //TODO write more tests
+        assertFalse("Coordinates outside boardsize should not be valid",board.checkMove(board.getBoardSize()+1,board.getBoardSize(),Marker.BLACK));
+        assertFalse("negative coordinates should not be valid",board.checkMove(-1,0,Marker.BLACK));
     }
 
     @Test
