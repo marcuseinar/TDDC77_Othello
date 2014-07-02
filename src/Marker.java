@@ -2,7 +2,7 @@
  * Created by einar on 2014-06-29.
  */
 public enum Marker {
-    EMPTY("e"),BLACK("b"),WHITE("w");
+    EMPTY("E"),BLACK("B"),WHITE("W");
 
     String marker;
     Marker(String marker){
@@ -14,13 +14,14 @@ public enum Marker {
     }
 
     /**
+     * Help Method.
      * Returns the opposite color of the marker. If The marker is empty it returns empty.
      * @return
      */
-    public Marker getOppostie(){
-        if(this == EMPTY){
-            return EMPTY;
+    public  Marker getOppostie(){
+        if(this == Marker.EMPTY){
+            return Marker.EMPTY;
         }
-        return (this == BLACK) ? WHITE : BLACK;
+        return (this == Marker.BLACK) ? Marker.WHITE : Marker.BLACK;
     }
 }

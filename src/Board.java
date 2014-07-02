@@ -35,7 +35,10 @@ public class Board {
      * @return
      */
     public boolean makeMove(int x, int y, Marker m){
-        return checkMove(x, y, m, true);
+        if(this.board[x][y] == Marker.EMPTY){
+            return checkMove(x, y, m, true);
+        }
+        return false;
     }
 
     /**
@@ -62,17 +65,52 @@ public class Board {
         boolean validMove = false;
         for(int i = -1; i <= 1; i++){
             for(int j = -1; j <= 1; j++){
-                if checkDirection(i,j, makeMove){
-                    if(makeMove){
-                        return true;
+                if (checkDirection(x, y, i, j, m, makeMove)){
+                    if(makeMove){ //if makeMove, Carry on searching or else return true.
+                        validMove = true;
                     }
                     else{
-                        validMove = true;
+                        return true;
                     }
                 }
             }
         }
         return validMove;
+    }
+
+    private boolean checkDirection(int x, int y, int dx, int dy, Marker m, boolean makeMove) {
+        if(dx == 0 && dy == 0){
+            return false;
+        }
+        int steps = 0;
+        while(true){
+            try{
+                x += dx;
+                y += dy;
+                ++steps;
+                if(steps > 1 && this.board[x][y] == m){
+                     break;
+                }
+                else if(this.board[x][y] != m.getOppostie()){
+                    return false;
+                }
+            }
+            catch (ArrayIndexOutOfBoundsException e){
+                 return false;
+            }
+        }
+        if(makeMove) { //Flip pieces
+            steps--;
+            x -= dx;
+            y -= dy;
+            for (int i = steps; i > 0; i--) {
+                this.board[x][y] = m;
+                x-=dx;
+                y-=dy;
+            }
+            this.board[x][y] = m;
+        }
+        return true;
     }
 
 
@@ -82,6 +120,7 @@ public class Board {
         int x, y;
         Marker m = Marker.BLACK;
         while(true) {
+            System.out.println("-------------------------");
             System.out.println("   0  1  2  3  4  5  6  7");
             for (int i = 0; i < 8; i++) {
                 System.out.println(i + " " + Arrays.toString(board.getBoard()[i]));
