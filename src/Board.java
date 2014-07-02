@@ -9,11 +9,12 @@ public class Board {
     private Marker[][] board;
     private int blackCounter, whiteCounter;
 
+    private int boardSize = 8; // Variablie for making it easy to retrieve board size and making versions of the game
 
     public Board() {
-        this.board = new Marker[8][8];
-        for(int i = 0; i < 8; i++){
-            for(int j = 0; j < 8; j++){
+        this.board = new Marker[boardSize][boardSize];
+        for(int i = 0; i < boardSize; i++){
+            for(int j = 0; j < boardSize; j++){
                 this.board[i][j] = Marker.EMPTY;
             }
         }
@@ -24,6 +25,9 @@ public class Board {
 
     public Marker[][] getBoard(){
         return this.board;
+    }
+    public int getBoardSize() {
+        return boardSize;
     }
 
     /**
@@ -114,6 +118,9 @@ public class Board {
     }
 
 
+    /**
+     * method to test functionality
+     */
     public static void main(String args[]){
         Board board = new Board();
         Scanner in = new Scanner(System.in);
