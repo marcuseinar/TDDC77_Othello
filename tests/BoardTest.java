@@ -1,8 +1,6 @@
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
-
 import static org.junit.Assert.*;
 
 public class BoardTest {
@@ -38,14 +36,19 @@ public class BoardTest {
         assertFalse("Black move was valid where it shouldn't be", board.checkMove(3,2,Marker.BLACK));
         assertTrue("White move was not valid where it should be", board.checkMove(3,2,Marker.WHITE));
         assertFalse("White move was valid where it shouldn't be", board.checkMove(2,2,Marker.WHITE));
-        assertFalse("Empy marker should not be valid",board.checkMove( 4,2,Marker.EMPTY));
+
+        assertFalse("Empty marker should not be valid",board.checkMove( 4,2,Marker.EMPTY));
+
         assertFalse("negative coordinates should not be valid",board.checkMove( -1,0,Marker.BLACK));
         assertFalse("negative coordinates should not be valid",board.checkMove(0,-1,Marker.BLACK));
         assertFalse("negative coordinates should not be valid",board.checkMove(-1,-1,Marker.BLACK));
 
-        //TODO write more tests
-        assertFalse("Coordinates outside boardsize should not be valid",board.checkMove(board.getBoardSize()+1,board.getBoardSize(),Marker.BLACK));
-        assertFalse("negative coordinates should not be valid",board.checkMove(-1,0,Marker.BLACK));
+        assertFalse("Coordinates outside boardsize should not be valid",board.checkMove(board.getBoardSize(),0,Marker.BLACK));
+        assertFalse("Coordinates outside boardsize should not be valid",board.checkMove(0,board.getBoardSize(),Marker.BLACK));
+        assertFalse("Coordinates outside boardsize should not be valid",board.checkMove(board.getBoardSize(),board.getBoardSize(),Marker.BLACK));
+
+        assertFalse("Cannot place on another marker",board.checkMove(4,4,Marker.BLACK));
+        assertFalse("Cannot place on another marker",board.checkMove(3,3,Marker.WHITE));
     }
 
     @Test
@@ -78,5 +81,29 @@ public class BoardTest {
         assertTrue("White move was not valid where it should be", board.makeMove(5,2,Marker.WHITE));
         assertArrayEquals("White move was not made", expectedBoard, board.getBoard());
 
+        assertFalse("Empty marker should not be valid",board.makeMove( 4,2,Marker.EMPTY));
+
+        assertFalse("negative coordinates should not be valid",board.makeMove( -1,0,Marker.BLACK));
+        assertFalse("negative coordinates should not be valid",board.makeMove(0,-1,Marker.BLACK));
+        assertFalse("negative coordinates should not be valid",board.makeMove(-1,-1,Marker.BLACK));
+        assertFalse("Coordinates outside boardsize should not be valid",board.makeMove(board.getBoardSize(),0,Marker.BLACK));
+        assertFalse("Coordinates outside boardsize should not be valid",board.makeMove(0,board.getBoardSize(),Marker.BLACK));
+        assertFalse("Coordinates outside boardsize should not be valid",board.makeMove(board.getBoardSize(),board.getBoardSize(),Marker.BLACK));
+
+        assertFalse("Cannot place on another marker",board.makeMove(4,4,Marker.BLACK));
+        assertFalse("Cannot place on another marker",board.makeMove(3,3,Marker.WHITE));
+    }
+
+    @Test
+    public void testGetPlayerCounter() throws Exception {
+        assertEquals("Counted wrong ammount of BLACK pieces", 2, board.getPlayerCounter(Marker.BLACK));
+        assertEquals("Counted wrong ammount of WHITE pieces", 2, board.getPlayerCounter(Marker.WHITE));
+        board.makeMove(4,2,Marker.BLACK);
+        assertEquals("Counted wrong ammount of BLACK pieces", 4,board.getPlayerCounter(Marker.BLACK));
+        assertEquals("Counted wrong ammount of WHITE pieces", 1,board.getPlayerCounter(Marker.WHITE));
+        board.makeMove(5,2,Marker.WHITE);
+        assertEquals("Counted wrong ammount of BLACK pieces", 3,board.getPlayerCounter(Marker.WHITE));
+        assertEquals("Counted wrong ammount of WHITE pieces", 3,board.getPlayerCounter(Marker.WHITE));
+        assertEquals("EMPTY amrker should return -1", -1,board.getPlayerCounter(Marker.EMPTY));
     }
 }
