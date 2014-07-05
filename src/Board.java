@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -207,6 +208,7 @@ public class Board {
 
     public static void main(String args[]){ //this method is only used to test functionality and behaviour. Will be replaced by game class later
         Board board = new Board();
+        System.out.println(board.getBoard().length);
         Scanner in = new Scanner(System.in);
         int x, y;
         Marker m = Marker.BLACK;
@@ -231,6 +233,14 @@ public class Board {
         }
     }
 
-
+    public ArrayList<Coordinate> getValidMoves(Marker marker) {
+        ArrayList<Coordinate> validMoves = new ArrayList<Coordinate>();
+        for(int x = 0; x < boardSize; x++){
+            for(int y = 0; y < boardSize; y++){
+                validMoves.add(new Coordinate(x,y));
+            }
+        }
+        return validMoves;
+    }
 }
 
