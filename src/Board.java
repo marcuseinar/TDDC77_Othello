@@ -237,7 +237,15 @@ public class Board {
         ArrayList<Coordinate> validMoves = new ArrayList<Coordinate>();
         for(int x = 0; x < boardSize; x++){
             for(int y = 0; y < boardSize; y++){
-                validMoves.add(new Coordinate(x,y));
+                try {
+                    if(checkMove(x,y,marker,false))
+                    validMoves.add(new Coordinate(x,y));
+                } catch (Exception e) {
+                    if(printErrors) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                }
             }
         }
         return validMoves;

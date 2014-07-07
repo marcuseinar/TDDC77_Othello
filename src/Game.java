@@ -5,39 +5,53 @@
  */
 public class Game {
     private Board board;
-    private AbstractPlayer player1;
-    private AbstractPlayer player2;
+    private AbstractPlayer[] players = new AbstractPlayer[2];
+
     private IUserInterface userInterface;
 
 
-    public Game(HumanPlayer player1, HumanPlayer player2, IUserInterface userInterface){
+    public Game(AbstractPlayer blackPlayer, AbstractPlayer whitePlayer, IUserInterface userInterface) throws Exception{
+        if(blackPlayer.getMarker() != Marker.BLACK || whitePlayer.getMarker() != Marker.WHITE){
+            throw new Exception("Error: Black player must have black marker and white player must have white marker.");
+        }
         this.board = new Board();
-        this.player1 = player1;
-        this.player2 = player2;
+        this.players[0] = blackPlayer;
+        this.players[1] = whitePlayer;
         this.userInterface = userInterface;
     }
 
     public void run(){
         Coordinate move;
         boolean validMove = false;
-        AbstractPlayer currentPlayer = this.player1;
+        int currentPlayerIndex = 0;
         boolean gameOver = false;
         while(!gameOver){
-            move = currentPlayer.getMove();
-            validMove = board.makeMove(move.getX(), move.getY(), currentPlayer.getMarker());
+            userInterface.drawBoard(this.board.getBoard());
+            move = players[currentPlayerIndex].getMove();
+            validMove = board.makeMove(move.getX(), move.getY(), players[currentPlayerIndex].getMarker());
             if(validMove){
-                if(board.getValidMoves(currentPlayer.getMarker().getOppostie()).size() > 0){
-
+                if(board.getValidMoves(players[currentPlayerIndex].getMarker().getOppostie()).size() > 0){
+                    currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
                 }
-                else if(board.getValidMoves(currentPlayer.getMarker()).size() > 0){
-
+                else if(board.getValidMoves(players[currentPlayerIndex].getMarker()).size() > 0){
+                    continue;
                 }
                 else{
                     gameOver = true;
                 }
-
             }
         }
-        userInterface.displayWinner();
+        userInterface.displayWinner(calculateWinner());
+    }
+
+    private Marker calculateWinner() {
+        int blackMarkers = board.getPlayerCounter(Marker.BLACK);
+        int whiteMarkers = board.getPlayerCounter(Marker.WHITE);
+        if(blackMarkers == whiteMarkers){
+            return Marker.EMPTY;
+        }
+        else{
+            return (blackMarkers > whiteMarkers) ? Marker.BLACK : Marker.WHITE;
+        }
     }
 }

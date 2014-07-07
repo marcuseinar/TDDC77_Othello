@@ -4,7 +4,7 @@
 public abstract class AbstractPlayer {
     Marker marker;
 
-    public AbstractPlayer(Marker marker){
+    public AbstractPlayer(Marker marker){ //TODO: Make better solution for choosing color
         this.marker = marker;
     }
 

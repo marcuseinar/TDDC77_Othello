@@ -1,6 +1,8 @@
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+
 import static org.junit.Assert.*;
 
 public class BoardTest {
@@ -105,5 +107,23 @@ public class BoardTest {
         assertEquals("Counted wrong ammount of BLACK pieces", 3,board.getPlayerCounter(Marker.WHITE));
         assertEquals("Counted wrong ammount of WHITE pieces", 3,board.getPlayerCounter(Marker.WHITE));
         assertEquals("EMPTY amrker should return -1", -1,board.getPlayerCounter(Marker.EMPTY));
+    }
+
+    @Test
+    public void testGetValidMoves() throws Exception {
+        ArrayList<Coordinate> expected = new ArrayList<Coordinate>();
+        expected.add(new Coordinate(4,2));
+        expected.add(new Coordinate(2,4));
+        expected.add(new Coordinate(5,3));
+        expected.add(new Coordinate(3,5));
+        assertTrue("Did not return correct valid moves list",expected.equals(this.board.getValidMoves(Marker.BLACK)));
+
+        board.makeMove(4,2,Marker.BLACK);
+
+        expected = new ArrayList<Coordinate>();
+        expected.add(new Coordinate(2,3));
+        expected.add(new Coordinate(2,5));
+        expected.add(new Coordinate(4,5));
+        assertTrue("Did not return correct valid moves list",expected.equals(this.board.getValidMoves(Marker.WHITE)));
     }
 }
