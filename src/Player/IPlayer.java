@@ -9,7 +9,7 @@ import Models.Marker;
 interface IPlayer{
     /**
      * Get the players marker.
-     * * @return marker
+     * @return marker
      */
     public Marker getMarker();
 
