@@ -12,11 +12,11 @@ public abstract class AbstractAiPlayer implements IPlayer{
 
     /**
      * Sets the board that the AI player uses to calculate it's moves.
-     * @param board
+     * @param board the current game board.
      */
     public void setBoard(Board board){
         this.board = board;
-    };
+    }
 
     /**
      * Calls the AI Player's
