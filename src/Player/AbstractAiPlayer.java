@@ -1,6 +1,7 @@
 package Player;
 
 import Models.Board;
+import Models.Marker;
 
 /**
  * Author: Einar
@@ -9,6 +10,7 @@ import Models.Board;
  */
 public abstract class AbstractAiPlayer implements IPlayer{
     Board board = null;
+    Marker marker;
 
     /**
      * Sets the board that the AI player uses to calculate it's moves.
@@ -22,6 +24,24 @@ public abstract class AbstractAiPlayer implements IPlayer{
      * Calls the AI Player's
      */
     abstract void makeMove();
+
+    /**
+     * {@inheritDoc}
+     * @return
+     */
+    @Override
+    public Marker getMarker() {
+        return this.marker;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @param marker the player's marker
+     */
+    @Override
+    public void setMarker(Marker marker) {
+        this.marker = marker;
+    }
 
     /**
      * {@inheritDoc}
