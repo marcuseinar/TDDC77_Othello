@@ -1,5 +1,6 @@
 package Player;
 
+import Controllers.GameController;
 import Models.Board;
 import Models.Coordinate;
 import Models.Marker;
@@ -19,7 +20,8 @@ public class MinMaxAIPlayer extends AbstractAiPlayer {
      * Uses a mobility based approach to choosing move. The more moves available for oneself the better.
      * @param searchDepth the depth of the search in min max. Higher number = smarter AI.
      */
-    public MinMaxAIPlayer(int searchDepth) {
+    public MinMaxAIPlayer(GameController gameController, int searchDepth) {
+        super(gameController);
         this.searchDepth = searchDepth;
     }
 
@@ -53,7 +55,7 @@ public class MinMaxAIPlayer extends AbstractAiPlayer {
             try {
                 tempBoard = new Board(board.getBoard());
                 tempBoard.makeMove(tempMove, getMarker());
-                tempScore = getMinMaxScore(tempBoard, depth - 1, marker.getOppostie())[0];
+                tempScore = getMinMaxScore(tempBoard, depth - 1, marker.getOpposite())[0];
                 if (max && tempScore > bestScore) {
                     bestScore = tempScore;
                     bestMove = tempMove;
@@ -75,7 +77,7 @@ public class MinMaxAIPlayer extends AbstractAiPlayer {
      * Looks for the best move in a min max search.
      */
     @Override
-    public void makeMove() {
+    protected Coordinate getMove() {
         Coordinate move = null;
         try {
             int[] bestMove = getMinMaxScore(new Board(this.board.getBoard()), this.searchDepth, getMarker());
@@ -83,6 +85,6 @@ public class MinMaxAIPlayer extends AbstractAiPlayer {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        board.makeMove(move, this.marker);
+        return move;
     }
 }

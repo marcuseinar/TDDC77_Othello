@@ -1,15 +1,17 @@
 package Player;
 
-import Models.Marker;
+import Models.Coordinate;
 import UserInterface.AbstractUserInterface;
+
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Author: Einar
  *
  * A player class that uses human interaction to control moves.
  */
-public class HumanPlayer implements IPlayer {
-    Marker marker;
+public class HumanPlayer extends AbstractPlayer implements Observer{
     AbstractUserInterface userInterface;
 
     /**
@@ -18,23 +20,8 @@ public class HumanPlayer implements IPlayer {
      */
     public HumanPlayer(AbstractUserInterface userInterface){
         this.userInterface = userInterface;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Marker getMarker() {
-        return this.marker;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setMarker(Marker marker) {
-        this.marker = marker;
-        wakePlayer();
+        addObserver(userInterface);
+        userInterface.addObserver(this);
     }
 
     /**
@@ -42,6 +29,14 @@ public class HumanPlayer implements IPlayer {
      */
     @Override
     public void wakePlayer() {
-        this.userInterface.getMove(this.marker);
+        System.out.println("player woken: " + marker.toString());
+        userInterface.getMove();
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if(o instanceof AbstractUserInterface && arg instanceof Coordinate){
+            makeMove((Coordinate) arg);
+        }
     }
 }

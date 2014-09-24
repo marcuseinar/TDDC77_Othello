@@ -1,16 +1,26 @@
 package Player;
 
+import Controllers.GameController;
 import Models.Board;
+import Models.Coordinate;
 import Models.Marker;
+
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Author: Einar
  *
  * The Abstract base class for all AI players
  */
-public abstract class AbstractAiPlayer implements IPlayer{
+public abstract class AbstractAiPlayer extends AbstractPlayer implements Observer {
     Board board = null;
     Marker marker;
+
+    AbstractAiPlayer(GameController gameController){
+        this.board = gameController.getBoard();
+        gameController.addObserver(this);
+    }
 
     /**
      * Sets the board that the AI player uses to calculate it's moves.
@@ -23,28 +33,11 @@ public abstract class AbstractAiPlayer implements IPlayer{
     /**
      * Calls the AI Player's
      */
-    abstract void makeMove();
+    abstract protected Coordinate getMove();
 
     /**
      * {@inheritDoc}
-     * @return
-     */
-    @Override
-    public Marker getMarker() {
-        return this.marker;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @param marker the player's marker
-     */
-    @Override
-    public void setMarker(Marker marker) {
-        this.marker = marker;
-    }
-
-    /**
-     * {@inheritDoc}
+     *
      */
     @Override
     public void wakePlayer() {
@@ -52,6 +45,15 @@ public abstract class AbstractAiPlayer implements IPlayer{
             System.out.println("Board can't be null. Please set board variable");
             return;
         }
-        makeMove();
+        Coordinate move = getMove();
+        setChanged();
+        notifyObservers(move);
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if(o instanceof GameController && arg instanceof Board){
+            setBoard((Board) arg);
+        }
     }
 }

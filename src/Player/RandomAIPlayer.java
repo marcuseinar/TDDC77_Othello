@@ -1,12 +1,13 @@
 package Player;
 
+import Controllers.GameController;
 import Models.Coordinate;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 /**
- * Author: EInar
+ * Author: Einar
  *
  * A "dumb" AI player that places valid moves at random.
  */
@@ -16,7 +17,8 @@ public class RandomAIPlayer extends AbstractAiPlayer {
     /**
      * Creates a player that places moves at random.
      */
-    public RandomAIPlayer() {
+    public RandomAIPlayer(GameController gameController) {
+        super(gameController);
         this.random = new Random();
     }
 
@@ -24,9 +26,11 @@ public class RandomAIPlayer extends AbstractAiPlayer {
      * Makes valid move at random.
      */
     @Override
-    void makeMove() {
+    protected Coordinate getMove() {
         ArrayList<Coordinate> validMoves = board.getValidMoves(this.marker);
+
+        System.out.println(board.getPlayerCounter(marker.getOpposite()));
         int i = random.nextInt(validMoves.size());
-        board.makeMove(validMoves.get(i), this.marker);
+        return validMoves.get(i);
     }
 }

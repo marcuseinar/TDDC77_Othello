@@ -1,6 +1,7 @@
+package Models;
+
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
+import java.util.Observable;
 
 /**
  * Created by einar on 2014-06-29.
@@ -8,7 +9,7 @@ import java.util.Scanner;
  * It contains the basic rules needed to place markers.
  */
 
-public class Board {
+public class Board extends Observable{
     private Marker[][] board;
     private int blackCounter, whiteCounter;
     private int boardSize = 8; // Variablie for making it easy to retrieve board size and making versions of the game
@@ -30,16 +31,46 @@ public class Board {
     }
 
     /**
-     * Returns the board as a Marker[][] array.
+     * Othello board
+     * @param board the board that should be initiated
+     * @throws Exception
+     */
+    public Board(Marker[][] board) throws Exception{
+        if(board.length != this.boardSize || board[0].length != this.boardSize){
+            throw new Exception("Models.Board must be sized " + this.boardSize + " x " + this.boardSize);
+        }
+        this.board = board;
+        for(int i = 0; i < this.boardSize; i++){
+            for(int j = 0; j < this.boardSize; j++) {
+                switch (this.board[i][j]){
+                    case BLACK:
+                        blackCounter++; break;
+                    case WHITE:
+                        whiteCounter++;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns the board as a Models.Marker[][] array.
      * @return the game board
      */
     public Marker[][] getBoard(){
-        return this.board;
+        Marker[][] boardCopy = new Marker[boardSize][boardSize];
+        for(int i = 0; i < boardSize; i++){
+            for(int j = 0; j < boardSize; j++){
+                boardCopy[i][j] = this.board[i][j];
+            }
+        }
+        return boardCopy;
     }
 
     /**
      * Returns the boards size (height/width).
-     * This method is not necessary but might be useful if diferent versions of the game is made.
+     * This method is not necessary but might be useful if different versions of the game is made.
      * @return the height/width of the board
      */
     public int getBoardSize() {
@@ -49,7 +80,7 @@ public class Board {
     /**
      * Returns the amount of Markers on the board for a specific player.
      * @param m the type of marker that is counted on the board
-     * @return  the amount of markers for the specific player, -1 if m is Marker.EMPTY
+     * @return  the amount of markers for the specific player, -1 if m is Models.Marker.EMPTY
      */
     public int getPlayerCounter(Marker m){
         if(m == Marker.EMPTY){
@@ -61,33 +92,36 @@ public class Board {
     /**
      * Places the specified marker at the coordinates if the move is valid.
      * Returns true if the move was successful and false if not.
-     * @param x x-coordinate where the marker is being placed
-     * @param y y-coordinate where the marker is being placed
+     * @param coordinate the coordinate where the marker is being placed
      * @param m the type of marker that is being placed
-     * @return  true if the move is valid, otherwise false
+     * @return true if the move is valid, otherwise false
      */
-    public boolean makeMove(int x, int y, Marker m){
+    public boolean makeMove(Coordinate coordinate, Marker m) { //TODO change do coordinate everywhere
+        boolean returnValue = false;
         try {
-            return checkMove(x, y, m, true);
+            if(checkMove(coordinate, m, true)){
+                setChanged();
+                returnValue = true;
+            }
         } catch (Exception e) {
             if(printErrors) {
                 e.printStackTrace();
             }
         }
-        return false;
+        notifyObservers();
+        return returnValue;
     }
 
     /**
      * Checks if the coordinate is a valid place to put a marker of the specified color.
      * Returns true if the move is valid and false if not.
-     * @param x x-coordinate for where to check
-     * @param y y-coordinate for where to check
-     * @param m the type of marker that is being placed
+     * @param coordinate the coordinate for where to check
+     * @param marker the type of marker that is being placed
      * @return  true if the move would be valid, otherwise false
      */
-    public boolean checkMove(int x, int y, Marker m){
+    public boolean checkMove(Coordinate coordinate, Marker marker){
         try {
-            return checkMove(x, y, m, false);
+            return checkMove(coordinate, marker, false);
         } catch (Exception e) {
             if(printErrors) {
                 e.printStackTrace();
@@ -99,23 +133,22 @@ public class Board {
     /**
      * Checks if the coordinate is a valid place to put a marker of the specified color.
      * Returns true if the move is valid and false if not.
-     * If the makeMove parameter is true the method checks all directions around the placed marker and flips the pieces,
+     * If the getMove parameter is true the method checks all directions around the placed marker and flips the pieces,
      * otherwise it returns true directly after a valid direction is found.
-     * @param x         x-coordinate where the marker is being placed
-     * @param y         y-coordinate where the marker is being placed
-     * @param m         the type of marker that is being placed
+     * @param coordinate the coordinate for where to check
+     * @param marker         the type of marker that is being placed
      * @param makeMove  set to true if a marker should be placed and opposite markers flipped, otherwise set false
      * @return          true if the move is valid, otherwise false
      */
-    private boolean checkMove(int x, int y, Marker m, boolean makeMove) throws Exception{
-        if(m == Marker.EMPTY || board[x][y] != Marker.EMPTY){
+    private boolean checkMove(Coordinate coordinate, Marker marker, boolean makeMove) throws Exception{
+        if(marker == Marker.EMPTY || board[coordinate.getX()][coordinate.getY()] != Marker.EMPTY){
             return false;
         }
         boolean validMove = false;
         for(int i = -1; i <= 1; i++){
             for(int j = -1; j <= 1; j++){
-                if (checkDirection(x, y, i, j, m, makeMove)){
-                    if(makeMove){ //if makeMove, Carry on searching or else return true.
+                if (checkDirection(coordinate.getX(), coordinate.getY(), i, j, marker, makeMove)){
+                    if(makeMove){ //if getMove, Carry on searching or else return true.
                         validMove = true;
                     }
                     else{
@@ -131,7 +164,7 @@ public class Board {
      * This method checks if a direction is valid.
      * If the placed marker puts an uninterrupted line of one or more opponent pieces between two friendly markers
      * the move is considered valid.
-     * If the variable makeMove is set to true it also flips the opponents pieces between the friendly ones.
+     * If the variable getMove is set to true it also flips the opponents pieces between the friendly ones.
      * @param x         x-coordinate where the marker is being placed
      * @param y         y-coordinate where the marker is being placed
      * @param dx        defines  in what direction to move on hte x-axis each step, -1 = left, 0 = none, 1 = right
@@ -154,7 +187,7 @@ public class Board {
                 if(steps > 1 && this.board[x][y] == m){
                      break;
                 }
-                else if(this.board[x][y] != m.getOppostie()){
+                else if(this.board[x][y] != m.getOpposite()){
                     return false;
                 }
             }
@@ -190,7 +223,7 @@ public class Board {
      * @return  true if flip was successful, otherwise false
      */
     private boolean flip(int x, int y) {
-        Marker m = this.board[x][y] = this.board[x][y].getOppostie();
+        Marker m = this.board[x][y] = this.board[x][y].getOpposite();
         if(m == Marker.EMPTY){
             return false;
         }
@@ -205,40 +238,12 @@ public class Board {
         return true;
     }
 
-
-    public static void main(String args[]){ //this method is only used to test functionality and behaviour. Will be replaced by game class later
-        Board board = new Board();
-        System.out.println(board.getBoard().length);
-        Scanner in = new Scanner(System.in);
-        int x, y;
-        Marker m = Marker.BLACK;
-        while(true) {
-            System.out.println("-------------------------");
-            System.out.println("   0  1  2  3  4  5  6  7");
-            for (int i = 0; i < 8; i++) {
-                System.out.println(i + " " + Arrays.toString(board.getBoard()[i]));
-            }
-            System.out.println("Player turn: " + m.toString());
-            System.out.print("Input x coord: ");
-            x = in.nextInt();
-            System.out.print("Input y coord: ");
-            y = in.nextInt();
-            if(board.makeMove(x,y,m)){
-                System.out.println("Move valid!");
-                m = m.getOppostie();
-            }
-            else{
-                System.out.println("Invalid move, try again!");
-            }
-        }
-    }
-
     public ArrayList<Coordinate> getValidMoves(Marker marker) {
         ArrayList<Coordinate> validMoves = new ArrayList<Coordinate>();
         for(int x = 0; x < boardSize; x++){
             for(int y = 0; y < boardSize; y++){
                 try {
-                    if(checkMove(x,y,marker,false))
+                    if(checkMove(new Coordinate(x,y),marker,false))
                     validMoves.add(new Coordinate(x,y));
                 } catch (Exception e) {
                     if(printErrors) {
