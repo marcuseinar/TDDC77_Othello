@@ -1,5 +1,7 @@
 package Models;
 
+import UserInterface.AbstractUserInterface;
+
 import java.util.ArrayList;
 import java.util.Observable;
 
@@ -10,6 +12,7 @@ import java.util.Observable;
  */
 
 public class Board extends Observable{
+    private AbstractUserInterface userInterface;
     private Marker[][] board;
     private int blackCounter, whiteCounter;
     private int boardSize = 8; // Variablie for making it easy to retrieve board size and making versions of the game
@@ -18,7 +21,8 @@ public class Board extends Observable{
     /**
      * Othello board
      */
-    public Board() {
+    public Board(AbstractUserInterface userInterface) {
+        this.userInterface = userInterface;
         this.board = new Marker[boardSize][boardSize];
         for(int i = 0; i < boardSize; i++){
             for(int j = 0; j < boardSize; j++){

@@ -31,6 +31,7 @@ public class GameInformationPanel extends JPanel{
     }
 
     public void setPlayerTurn(Marker marker){
+        System.out.println("här");
         playerTurnSquarePanel.setMarker(marker);
     }
 

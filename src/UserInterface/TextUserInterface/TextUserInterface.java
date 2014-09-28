@@ -1,9 +1,8 @@
 package UserInterface.TextUserInterface;
 
 import Models.Board;
-import Models.Coordinate;
 import Models.Marker;
-import Player.AbstractPlayer;
+import Player.HumanPlayer;
 import UserInterface.AbstractUserInterface;
 
 import java.util.Scanner;
@@ -34,14 +33,12 @@ public class TextUserInterface extends AbstractUserInterface {
     }
 
     @Override
-    public void getMove() {
+    public void getMove(HumanPlayer player) {
         int x,y;
         System.out.print("! Input x-coordinate:");
         x = in.nextInt();
         System.out.print("! Input y-coordinate:");
         y = in.nextInt();
-        setChanged();
-        notifyObservers(new Coordinate(x,y));
         //return new Coordinate(x,y);
     }
 
@@ -64,8 +61,8 @@ public class TextUserInterface extends AbstractUserInterface {
     }
 
     @Override
-    protected void setCurrentPlayer(AbstractPlayer player) {
-
+    public void setCurrentPlayer(Marker marker) {
+        System.out.println(marker.toString() + " players turn.");
     }
 
     private char getMarkerAsChar(Marker marker){

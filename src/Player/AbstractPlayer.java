@@ -1,16 +1,20 @@
 package Player;
+import Controllers.GameController;
 import Models.Coordinate;
 import Models.Marker;
-
-import java.util.Observable;
 
 /**
  * Author: einar
  *
  * The base interface for all player classes.
  */
-public abstract class AbstractPlayer extends Observable{
+public abstract class AbstractPlayer{
     protected Marker marker;
+    protected GameController gameController;
+
+    public AbstractPlayer(GameController gameController){
+        this.gameController = gameController;
+    }
 
     /**
      * Get the players marker.
@@ -37,8 +41,8 @@ public abstract class AbstractPlayer extends Observable{
      * Makes a move
      */
     public void makeMove(Coordinate coordinate){
-        setChanged();
-        notifyObservers(coordinate);
-        System.out.println("player made move " + marker.toString());
+        System.out.println(coordinate);
+        System.out.println(gameController);
+        this.gameController.makeMove(coordinate);
     }
 }

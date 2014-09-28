@@ -28,7 +28,6 @@ public class RandomAIPlayer extends AbstractAiPlayer {
     @Override
     protected Coordinate getMove() {
         ArrayList<Coordinate> validMoves = board.getValidMoves(this.marker);
-
         System.out.println(board.getPlayerCounter(marker.getOpposite()));
         int i = random.nextInt(validMoves.size());
         return validMoves.get(i);

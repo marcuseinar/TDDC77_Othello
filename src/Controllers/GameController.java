@@ -3,11 +3,9 @@ package Controllers;
 import Models.Board;
 import Models.Coordinate;
 import Models.Marker;
+import Player.AbstractAiPlayer;
 import Player.AbstractPlayer;
 import UserInterface.AbstractUserInterface;
-
-import java.util.Observable;
-import java.util.Observer;
 
 /**
  * Author: Einar
@@ -16,16 +14,14 @@ import java.util.Observer;
  * It is responsible for placing moves on the board, keeping track of the current player and deciding whether the game
  * is over.
  */
-public class GameController extends Observable implements Observer{
+public class GameController{
     private Board board;
     private AbstractPlayer[] players = new AbstractPlayer[2];
     private int currentPlayerIndex;
     private AbstractUserInterface userInterface;
 
     public GameController(AbstractUserInterface userInterface){
-        userInterface.addObserver(this);
         this.userInterface = userInterface;
-        addObserver(userInterface);
     }
 
     /**
@@ -59,12 +55,12 @@ public class GameController extends Observable implements Observer{
      */
     public void newGame(){
         System.out.println("Creating new game");
-        this.board = new Board();
+        this.board = new Board(userInterface);
         startGame(this.board, 0);
     }
 
     /**
-     * Starts a new game initiated with the specified board and starting player
+     * Starts a new game initiated with the specified board and starting player.
      * @param board the Board that the game should be initiated with
      * @param currentPlayerIndex the Starting player - 0 for black, 1 for white
      */
@@ -72,39 +68,38 @@ public class GameController extends Observable implements Observer{
         System.out.println("Starting game");
         setBoard(board);
         this.currentPlayerIndex = currentPlayerIndex;
-        getMove(this.players[this.currentPlayerIndex]);
+        getMove();
     }
 
     private void setBoard(Board board){
         System.out.println("Setting board");
         this.board = board;
-        this.board.addObserver(this.userInterface);
-        setChanged();
-        notifyObservers(board);
-    }
-
-    private void getMove(AbstractPlayer player){
-        setChanged();
-        notifyObservers(player.getMarker());
-        player.wakePlayer();
-    }
-
-    private void makeMove(Coordinate coordinate, Marker marker){
-        if(marker != players[currentPlayerIndex].getMarker()){
-            return;
+        board.addObserver(userInterface);
+        for(AbstractPlayer p: players){
+            if(p instanceof AbstractAiPlayer){
+                ((AbstractAiPlayer) p).setBoard(board);
+            }
         }
-        if(board.makeMove(coordinate, marker)){
-            if(board.getValidMoves(marker.getOpposite()).size() > 0){
-                this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.players.length;
-                setChanged();
-                notifyObservers(players[currentPlayerIndex].getMarker());
+        userInterface.drawBoard(board.getBoard());
+    }
+
+    private void getMove(){
+        userInterface.setCurrentPlayer(players[currentPlayerIndex].getMarker());
+        players[currentPlayerIndex].wakePlayer();
+    }
+
+    public void makeMove(Coordinate coordinate){
+        Marker moveMarker = this.players[this.currentPlayerIndex].getMarker();
+        if(board.makeMove(coordinate, moveMarker)){
+            if(board.getValidMoves(moveMarker.getOpposite()).size() > 0){
+                this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.players.length; //Changes player
             }
             else if(this.board.getValidMoves(this.players[this.currentPlayerIndex].getMarker()).size() == 0){
                 gameOver();
                 return;
             }
         }
-        getMove(this.players[this.currentPlayerIndex]);
+        getMove();
     }
 
     private void gameOver(){
@@ -119,14 +114,6 @@ public class GameController extends Observable implements Observer{
         }
         else{
             return (blackMarkers > whiteMarkers) ? Marker.BLACK : Marker.WHITE;
-        }
-    }
-
-    @Override
-    public void update(Observable o, Object arg) {
-        if(o instanceof AbstractPlayer && arg instanceof Coordinate){
-            System.out.println("move made by player");
-            makeMove((Coordinate) arg, ((AbstractPlayer) o).getMarker());
         }
     }
 }

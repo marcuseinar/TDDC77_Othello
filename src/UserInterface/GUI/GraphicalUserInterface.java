@@ -46,6 +46,8 @@ public class GraphicalUserInterface extends AbstractUserInterface implements Act
             e.printStackTrace();
         }
         gameController = new GameController(this);
+        blackPlayerSelection = new HumanPlayer(this, gameController);
+        whitePlayerSelection = new HumanPlayer(this, gameController);
         gameController.setPlayers(blackPlayerSelection,whitePlayerSelection);
     }
 
@@ -61,7 +63,7 @@ public class GraphicalUserInterface extends AbstractUserInterface implements Act
         //Menu bar
         menuBar = new JMenuBar();
         //Game menu item
-        JMenu gameMenu = new JMenu("Game");
+        final JMenu gameMenu = new JMenu("Game");
         JMenuItem newGameMenuItem = new JMenuItem("New Game");
         newGameMenuItem.setAccelerator(KeyStroke.getKeyStroke('N', ActionEvent.CTRL_MASK));
         newGameMenuItem.setActionCommand("NEW_GAME");
@@ -89,7 +91,6 @@ public class GraphicalUserInterface extends AbstractUserInterface implements Act
         blackPlayerSelectionGroup.add(minmaxAiPlayerRadioButton);
 
         humanPlayerRadioButton.setSelected(true);
-        this.blackPlayerSelection = new HumanPlayer(this);
 
         JMenu blackPlayerMenu = new JMenu("Black Player");
         optionsMenu.add(blackPlayerMenu);
@@ -115,7 +116,6 @@ public class GraphicalUserInterface extends AbstractUserInterface implements Act
         whitePlayerSelectionGroup.add(minmaxAiPlayerRadioButton);
 
         humanPlayerRadioButton.setSelected(true);
-        this.whitePlayerSelection = new HumanPlayer(this);
 
         JMenu whitePlayerMenu = new JMenu("White Player");
         optionsMenu.add(whitePlayerMenu);
@@ -138,10 +138,11 @@ public class GraphicalUserInterface extends AbstractUserInterface implements Act
         boardPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(clickable && currentPlayer != null){
+                if(clickable){
                     clickable = false;
+                    System.out.println("clickable = " + clickable);
                     SquarePanel caller = (SquarePanel) e.getSource();
-                    currentPlayer.makeMove(caller.getCoordinate());
+                    gameController.makeMove(caller.getCoordinate());
                 }
             }
         });
@@ -171,8 +172,9 @@ public class GraphicalUserInterface extends AbstractUserInterface implements Act
     }
 
     @Override
-    public void getMove() {
+    public void getMove(HumanPlayer player) {
         clickable = true;
+        System.out.println("clickable = " + clickable);
     }
 
     @Override
@@ -186,12 +188,11 @@ public class GraphicalUserInterface extends AbstractUserInterface implements Act
     }
 
     @Override
-    protected void setCurrentPlayer(final AbstractPlayer player) {
-        this.currentPlayer = player;
+    public void setCurrentPlayer(final Marker marker) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                gameInformationPanel.setPlayerTurn(player.getMarker());
+                gameInformationPanel.setPlayerTurn(marker);
             }
         });
     }
@@ -205,10 +206,10 @@ public class GraphicalUserInterface extends AbstractUserInterface implements Act
         String s = e.getActionCommand();
         switch (s) {
             case "NEW_GAME": gameController.newGame(); break;
-            case "BP_HUMAN": gameController.setPlayers(new HumanPlayer(this), null); break;
+            case "BP_HUMAN": gameController.setPlayers(new HumanPlayer(this, gameController), null); break;
             case "BP_RANDOM": gameController.setPlayers(new RandomAIPlayer(gameController), null); break;
             case "BP_MIN_MAX": gameController.setPlayers(new MinMaxAIPlayer(gameController, 10), null); break;
-            case "WP_HUMAN": gameController.setPlayers(null, new HumanPlayer(this)); break;
+            case "WP_HUMAN": gameController.setPlayers(null, new HumanPlayer(this, gameController)); break;
             case "WP_RANDOM": gameController.setPlayers(null, new RandomAIPlayer(gameController)); break;
             case "WP_MIN_MAX": gameController.setPlayers(null, new MinMaxAIPlayer(gameController, 10)); break;
         }

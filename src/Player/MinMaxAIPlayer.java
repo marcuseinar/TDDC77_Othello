@@ -36,7 +36,6 @@ public class MinMaxAIPlayer extends AbstractAiPlayer {
      * @throws Exception
      */
     private int[] getMinMaxScore(Board board, int depth, Marker marker) throws Exception{
-        System.out.println(depth);
         if(marker == Marker.EMPTY){
             throw new Exception("minMax cannot take Models.Marker.EMPTY as argument in marker field");
         }

@@ -1,27 +1,23 @@
 package Player;
 
-import Models.Coordinate;
+import Controllers.GameController;
 import UserInterface.AbstractUserInterface;
-
-import java.util.Observable;
-import java.util.Observer;
 
 /**
  * Author: Einar
  *
  * A player class that uses human interaction to control moves.
  */
-public class HumanPlayer extends AbstractPlayer implements Observer{
+public class HumanPlayer extends AbstractPlayer{
     AbstractUserInterface userInterface;
 
     /**
      * Creates a player that takes a human input through an user interface.
      * @param userInterface the user interface through which the player interacts with the game.
      */
-    public HumanPlayer(AbstractUserInterface userInterface){
+    public HumanPlayer(AbstractUserInterface userInterface, GameController gameController){
+        super(gameController);
         this.userInterface = userInterface;
-        addObserver(userInterface);
-        userInterface.addObserver(this);
     }
 
     /**
@@ -29,14 +25,7 @@ public class HumanPlayer extends AbstractPlayer implements Observer{
      */
     @Override
     public void wakePlayer() {
-        System.out.println("player woken: " + marker.toString());
-        userInterface.getMove();
-    }
-
-    @Override
-    public void update(Observable o, Object arg) {
-        if(o instanceof AbstractUserInterface && arg instanceof Coordinate){
-            makeMove((Coordinate) arg);
-        }
+        System.out.println("this is player: " + marker.toString());
+        userInterface.getMove(this);
     }
 }

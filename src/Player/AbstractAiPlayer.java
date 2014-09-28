@@ -3,23 +3,17 @@ package Player;
 import Controllers.GameController;
 import Models.Board;
 import Models.Coordinate;
-import Models.Marker;
-
-import java.util.Observable;
-import java.util.Observer;
 
 /**
  * Author: Einar
  *
  * The Abstract base class for all AI players
  */
-public abstract class AbstractAiPlayer extends AbstractPlayer implements Observer {
+public abstract class AbstractAiPlayer extends AbstractPlayer{
     Board board = null;
-    Marker marker;
 
-    AbstractAiPlayer(GameController gameController){
-        this.board = gameController.getBoard();
-        gameController.addObserver(this);
+    public AbstractAiPlayer(GameController gameController) {
+        super(gameController);
     }
 
     /**
@@ -41,19 +35,13 @@ public abstract class AbstractAiPlayer extends AbstractPlayer implements Observe
      */
     @Override
     public void wakePlayer() {
+        System.out.println(2);
         if(board == null){
             System.out.println("Board can't be null. Please set board variable");
             return;
         }
         Coordinate move = getMove();
-        setChanged();
-        notifyObservers(move);
+        makeMove(move);
     }
 
-    @Override
-    public void update(Observable o, Object arg) {
-        if(o instanceof GameController && arg instanceof Board){
-            setBoard((Board) arg);
-        }
-    }
 }
