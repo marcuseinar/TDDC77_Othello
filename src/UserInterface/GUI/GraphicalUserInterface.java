@@ -14,7 +14,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Created by einar on 2014-07-13.
@@ -33,18 +32,7 @@ public class GraphicalUserInterface extends AbstractUserInterface implements Act
 
 
     public GraphicalUserInterface() {
-        try {
-            SwingUtilities.invokeAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    createAndShowGUI();
-                }
-            });
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        createAndShowGUI();
         gameController = new GameController(this);
         blackPlayerSelection = new HumanPlayer(this, gameController);
         whitePlayerSelection = new HumanPlayer(this, gameController);
@@ -198,7 +186,12 @@ public class GraphicalUserInterface extends AbstractUserInterface implements Act
     }
 
     public static void main(String args[]){
-        AbstractUserInterface ui = new GraphicalUserInterface();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new GraphicalUserInterface();
+            }
+        });
     }
 
     @Override

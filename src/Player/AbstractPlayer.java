@@ -41,8 +41,6 @@ public abstract class AbstractPlayer{
      * Makes a move
      */
     public void makeMove(Coordinate coordinate){
-        System.out.println(coordinate);
-        System.out.println(gameController);
         this.gameController.makeMove(coordinate);
     }
 }

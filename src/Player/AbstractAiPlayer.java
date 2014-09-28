@@ -40,8 +40,13 @@ public abstract class AbstractAiPlayer extends AbstractPlayer{
             System.out.println("Board can't be null. Please set board variable");
             return;
         }
-        Coordinate move = getMove();
-        makeMove(move);
+        new Runnable(){
+            @Override
+            public void run() {
+                makeMove(getMove());
+            }
+        }.run();
+
     }
 
 }
