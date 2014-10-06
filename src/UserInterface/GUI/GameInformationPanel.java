@@ -9,7 +9,7 @@ import java.awt.*;
  * Created by einar on 2014-07-14.
  */
 public class GameInformationPanel extends JPanel{
-    JLabel playerTurnLabel = new JLabel("Player Turn:");
+    JLabel playerTurnLabel;
     SquarePanel playerTurnSquarePanel;
     JLabel blackCountLabel;
     JLabel whiteCountLabel;
@@ -23,6 +23,7 @@ public class GameInformationPanel extends JPanel{
         playerTurnSquarePanel.setPreferredSize(new Dimension(80,80));
         blackCountLabel = new JLabel();
         whiteCountLabel = new JLabel();
+        playerTurnLabel = new JLabel();
 
         add(playerTurnLabel);
         add(playerTurnSquarePanel);
@@ -31,7 +32,7 @@ public class GameInformationPanel extends JPanel{
     }
 
     public void setPlayerTurn(Marker marker){
-        System.out.println("här");
+        playerTurnLabel.setText("Player Turn:");
         playerTurnSquarePanel.setMarker(marker);
     }
 
@@ -40,7 +41,8 @@ public class GameInformationPanel extends JPanel{
         whiteCountLabel.setText("White marker counter: " + whiteCount);
     }
 
-    public void displayWinner(Marker m) {
-
+    public void displayWinner(Marker marker) {
+        playerTurnLabel.setText("Winner: ");
+        playerTurnSquarePanel.setMarker(marker);
     }
 }

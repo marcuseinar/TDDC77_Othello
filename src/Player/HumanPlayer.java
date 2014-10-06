@@ -25,7 +25,6 @@ public class HumanPlayer extends AbstractPlayer{
      */
     @Override
     public void wakePlayer() {
-        System.out.println("this is player: " + marker.toString());
-        userInterface.getMove(this);
+        userInterface.getMove();
     }
 }

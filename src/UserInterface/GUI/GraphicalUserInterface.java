@@ -1,6 +1,7 @@
 package UserInterface.GUI;
 
 import Controllers.GameController;
+import Models.Board;
 import Models.Marker;
 import Player.AbstractPlayer;
 import Player.HumanPlayer;
@@ -128,7 +129,6 @@ public class GraphicalUserInterface extends AbstractUserInterface implements Act
             public void mouseClicked(MouseEvent e) {
                 if(clickable){
                     clickable = false;
-                    System.out.println("clickable = " + clickable);
                     SquarePanel caller = (SquarePanel) e.getSource();
                     gameController.makeMove(caller.getCoordinate());
                 }
@@ -150,19 +150,20 @@ public class GraphicalUserInterface extends AbstractUserInterface implements Act
     }
 
     @Override
-    public void drawBoard(final Marker[][] board) {
+    public void drawBoard(final Board board) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                boardPanel.drawBoard(board);
+                gameInformationPanel.setMarkerCounters(board.getPlayerCounter(Marker.BLACK), board.getPlayerCounter(Marker.WHITE));
+                boardPanel.drawBoard(board.getBoard());
             }
         });
+
     }
 
     @Override
-    public void getMove(HumanPlayer player) {
+    public void getMove() {
         clickable = true;
-        System.out.println("clickable = " + clickable);
     }
 
     @Override
@@ -173,31 +174,18 @@ public class GraphicalUserInterface extends AbstractUserInterface implements Act
                 gameInformationPanel.displayWinner(marker);
             }
         });
+
     }
 
     @Override
-    public void setCurrentPlayer(final Marker marker) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                gameInformationPanel.setPlayerTurn(marker);
-            }
-        });
-    }
-
-    public static void main(String args[]){
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new GraphicalUserInterface();
-            }
-        });
+    public void setCurrentPlayer(Marker marker) {
+        gameInformationPanel.setPlayerTurn(marker);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         String s = e.getActionCommand();
-        switch (s) {
+        switch (s) { // calls the correct method in gamecontroller corresponding to the called command.
             case "NEW_GAME": gameController.newGame(); break;
             case "BP_HUMAN": gameController.setPlayers(new HumanPlayer(this, gameController), null); break;
             case "BP_RANDOM": gameController.setPlayers(new RandomAIPlayer(gameController), null); break;
@@ -207,4 +195,18 @@ public class GraphicalUserInterface extends AbstractUserInterface implements Act
             case "WP_MIN_MAX": gameController.setPlayers(null, new MinMaxAIPlayer(gameController, 10)); break;
         }
     }
+
+    /**
+     * Starts an othello game with a GUI.
+     * @param args has no effect
+     */
+    public static void main(String args[]){
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new GraphicalUserInterface();
+            }
+        });
+    }
+
 }

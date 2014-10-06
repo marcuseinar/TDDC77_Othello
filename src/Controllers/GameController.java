@@ -80,7 +80,7 @@ public class GameController{
                 ((AbstractAiPlayer) p).setBoard(board);
             }
         }
-        userInterface.drawBoard(board.getBoard());
+        userInterface.drawBoard(board);
     }
 
     private void getMove(){

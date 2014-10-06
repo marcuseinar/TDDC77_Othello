@@ -25,27 +25,28 @@ public abstract class AbstractAiPlayer extends AbstractPlayer{
     }
 
     /**
-     * Calls the AI Player's
+     * Gets the next move from the AI player
+     * @return the coordinate for the next move
      */
     abstract protected Coordinate getMove();
 
     /**
      * {@inheritDoc}
-     *
      */
     @Override
     public void wakePlayer() {
-        System.out.println(2);
         if(board == null){
             System.out.println("Board can't be null. Please set board variable");
             return;
         }
-        new Runnable(){
+        Thread thread = new Thread(){
             @Override
             public void run() {
-                makeMove(getMove());
+                    makeMove(getMove());
             }
-        }.run();
+        };
+
+        thread.start();
 
     }
 

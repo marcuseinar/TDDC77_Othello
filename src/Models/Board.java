@@ -14,7 +14,6 @@ import java.util.Observable;
 public class Board extends Observable{
     private AbstractUserInterface userInterface;
     private Marker[][] board;
-    private int blackCounter, whiteCounter;
     private int boardSize = 8; // Variablie for making it easy to retrieve board size and making versions of the game
     public boolean printErrors = false; //Set true if error printings are needed. WARNING! This might not work well with text based user interfaces.
 
@@ -31,7 +30,6 @@ public class Board extends Observable{
         }
         this.board[3][3] = this.board[4][4] = Marker.BLACK;
         this.board[3][4] = this.board[4][3] = Marker.WHITE;
-        this.blackCounter = whiteCounter = 2;
     }
 
     /**
@@ -44,18 +42,6 @@ public class Board extends Observable{
             throw new Exception("Models.Board must be sized " + this.boardSize + " x " + this.boardSize);
         }
         this.board = board;
-        for(int i = 0; i < this.boardSize; i++){
-            for(int j = 0; j < this.boardSize; j++) {
-                switch (this.board[i][j]){
-                    case BLACK:
-                        blackCounter++; break;
-                    case WHITE:
-                        whiteCounter++;
-                    default:
-                        break;
-                }
-            }
-        }
     }
 
     /**
@@ -83,14 +69,22 @@ public class Board extends Observable{
 
     /**
      * Returns the amount of Markers on the board for a specific player.
-     * @param m the type of marker that is counted on the board
-     * @return  the amount of markers for the specific player, -1 if m is Models.Marker.EMPTY
+     * @param marker the type of marker that is counted on the board
+     * @return  the amount of markers for the specific player, -1 if marker is Models.Marker.EMPTY
      */
-    public int getPlayerCounter(Marker m){
-        if(m == Marker.EMPTY){
+    public int getPlayerCounter(Marker marker){
+        if(marker == Marker.EMPTY){
             return -1;
         }
-        return (m == Marker.BLACK) ? blackCounter : whiteCounter;
+        int counter = 0;
+        for(int i = 0; i < boardSize; i++){
+            for(int j = 0; j < boardSize; j++){
+                if(board[i][j] == marker){
+                    counter++;
+                }
+            }
+        }
+        return counter;
     }
 
     /**
@@ -209,13 +203,6 @@ public class Board extends Observable{
                 y-=dy;
             }
             this.board[x][y] = m; //Place the marker
-            if(m == Marker.BLACK){
-                blackCounter++;
-            }
-            else{
-                whiteCounter++;
-            }
-            return true;
         }
         return true;
     }
@@ -231,6 +218,7 @@ public class Board extends Observable{
         if(m == Marker.EMPTY){
             return false;
         }
+        /*
         if(m == Marker.BLACK){
             blackCounter++;
             whiteCounter--;
@@ -238,7 +226,7 @@ public class Board extends Observable{
         else{
             whiteCounter++;
             blackCounter--;
-        }
+        }*/
         return true;
     }
 

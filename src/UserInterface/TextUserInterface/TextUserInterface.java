@@ -2,7 +2,6 @@ package UserInterface.TextUserInterface;
 
 import Models.Board;
 import Models.Marker;
-import Player.HumanPlayer;
 import UserInterface.AbstractUserInterface;
 
 import java.util.Scanner;
@@ -18,8 +17,8 @@ public class TextUserInterface extends AbstractUserInterface {
     }
 
     @Override
-    public void drawBoard(Marker[][] board) {
-        System.out.println("    0   1   2   3   4   5   6   7");
+    public void drawBoard(Board board) {
+/*        System.out.println("    0   1   2   3   4   5   6   7");
 
         for(int y = 0; y < board.length; y++){
             System.out.println("  +---+---+---+---+---+---+---+---+");
@@ -29,11 +28,11 @@ public class TextUserInterface extends AbstractUserInterface {
             }
             System.out.println("|");
         }
-        System.out.println("  +---+---+---+---+---+---+---+---+");
+        System.out.println("  +---+---+---+---+---+---+---+---+");*/
     }
 
     @Override
-    public void getMove(HumanPlayer player) {
+    public void getMove() {
         int x,y;
         System.out.print("! Input x-coordinate:");
         x = in.nextInt();
